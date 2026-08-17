@@ -34,33 +34,21 @@ def Classical_OJ_Coordinates(q, m, n, k, r, n1, n2, n3, r1, r2, w): # Coordinate
        WF1 = w*math.log(m*N,2); WF2 = (N+k+1-r1)*(r1-1) + r2*(n2-r2) + math.log(q,2)
        return round(WF1 + WF2, 3)
 
-def Classical_OJ_Coordinates_Permuted(q, m, n, k, r, n1, n2, n3, r1, r2, w): # Coordinates Enumeration
-    N = math.ceil((m*(r-1) + (k+1-r))/m)
-    if 0 < k+1 <= r: # Case 1
-       WF1 = w*math.log(m*N,2); WF2 = (N-r+k+1)*(r1-1) + math.log(q,2)
-       return round(WF1 + WF2, 3)
-    elif r < k+1 <= n2: # Case 2
-       WF1 = w*math.log(m*N,2); WF2 = (r-1)*(k+1-r1) + N*(r1-1) + math.log(q,2)
-       return round(WF1 + WF2, 3)
-    elif n2  < k+1 <= n1+n2+n3: # Case 3
-       WF1 = w*math.log(m*N,2); WF2 = (r-1)*(n2-r) + (k+1-n2)*(r1-1) + N*(r1-1) + math.log(q,2)
-       return round(WF1 + WF2, 3)
 
 # NH-Multi-RQC-AG
-(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,61,3*50,50,12,50,50,50,7,5,2.81) # 128  (e1,e2,e3) 
+#(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,61,3*50,50,12,50,50,50,7,5,2.81) # 128  (e1,e2,e3) 
 #(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,79,3*95,95,13,95,95,95,8,5,2.81) # 192  (e1,e2,e3)
 
 # NH-Multi-UR-AG
-#(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,73,2*22+13,22,12,22,13,22,8,4,2.81) # 128  (e1,e2,e3) 
-# (q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,97,2*30+14,30,13,30,14,30,9,4,2.81) # 192  (e1,e2,e3)
+# (q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,73,2*22+13,22,12,22,13,22,8,4,2.81) # 128  (e1,e2,e3) 
+(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,97,2*30+14,30,13,30,14,30,9,4,2.81) # 192  (e1,e2,e3)
 
 
 AGHT = Classical_AGHT(q, m, n, k, r, n1, n2, n3, r1, r2, w)
 AGHT_NHRD = Classical_AGHT_NHRD(q, m, n, k, r, n1, n2, n3, r1, r2, w)
 OJ_NHRD = Classical_OJ_Coordinates(q, m, n, k, r, n1, n2, n3, r1, r2, w)
-OJ_NHRD_Permuted = Classical_OJ_Coordinates_Permuted(q, m, n, k, r, n1, n2, n3, r1, r2, w)
 
 headers = ["Attacks", "Classical Bit Complexity"]
-data = [["AGHT attack ", AGHT], ["AGHT_NHRD attack ", AGHT_NHRD], ["OJ_NHRD attack  ", OJ_NHRD], ["OJ_NHRD_Permuted attack  ", OJ_NHRD_Permuted]]
+data = [["AGHT attack ", AGHT], ["AGHT_NHRD attack ", AGHT_NHRD], ["OJ_NHRD attack  ", OJ_NHRD]]
 table =  tabulate(data, headers=headers, tablefmt="grid", numalign="center", stralign="center", showindex=True)
 print(table)

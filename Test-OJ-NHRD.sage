@@ -1,4 +1,4 @@
-# Test AGHT, NH-AGHT, OJ for NH-Multi-RQC-AG and NH-Multi-UR-AG
+# Test AGHT, NH-AGHT, OJ on the NHRD problem for NH-Multi-RQC-AG and NH-Multi-UR-AG
 
 from sage.all import *
 from pulp import * 
@@ -10,7 +10,7 @@ def Classical_AGHT(q, m, n, k, r, n1, n2, n3, r1, r2, w): # AGHT
     WF2 = w*math.log((n-k-1),2) + math.log(m**2,2) + (r*(k+1)) * math.log(q,2) 
     return round(min(WF1, WF2), 3)
 
-def Classical_AGHT_NHRD(q, m, n, k, r, n1, n2, n3, r1, r2, w):  # NH-AGHT
+def Classical_NH_AGHT(q, m, n, k, r, n1, n2, n3, r1, r2, w):  # NH-AGHT
     prob = LpProblem('NH-AGHT:', sense=LpMinimize)  # sense: LpMinimize or LpMaximize
     t1 = LpVariable('t1', r1, m, LpInteger); t2 = LpVariable('t2', r2, m, LpInteger)
     prob += (m-t1)*(r1 + r2) - t2*r2 # Objective
@@ -22,33 +22,44 @@ def Classical_AGHT_NHRD(q, m, n, k, r, n1, n2, n3, r1, r2, w):  # NH-AGHT
     print(WF, {v.name: v.varValue for v in prob.variables()})
     return round(WF,3)
 
-def Classical_OJ_Coordinates(q, m, n, k, r, n1, n2, n3, r1, r2, w): # Coordinates Enumeration
+
+def Classical_NH_OJ_Basis(q, m, n, k, r, n1, n2, n3, r1, r2, w): # Basis Enumeration
+    N = math.ceil(k*r/(m-r)); WF = w*math.log(N*m, q) + ((m-r)*(r-1)) * math.log(q,2) 
+    return round(WF, 3)
+
+def Classical_NH_OJ_Coordinates(q, m, n, k, r, n1, n2, n3, r1, r2, w): # Coordinates Enumeration
     N = math.ceil((m*(r-1) + (k+1-r1))/(m-1))
     if 0 < k+1 <= n1+r2: # Case 1
        WF1 = w*math.log(m*N,2); WF2 = (N+k+1-r1)*(r1-1) + math.log(q,2)
        return round(WF1 + WF2, 3)
     elif n1+r2 < k+1 <= n1+n2: # Case 2
-       WF1 = w*math.log(m*N,2); WF2 = (N+k+1-r1)*(r1-1) + r2*(k+1-r2) + math.log(q,2)
+       WF1 = w*math.log(m*N,2); WF2 = (N+k+1-r1)*(r1-1) + r2*(k+1-n1-r2) + math.log(q,2)
        return round(WF1 + WF2, 3)
     elif n1+n2  < k+1 <= n1+n2+n3: # Case 3
        WF1 = w*math.log(m*N,2); WF2 = (N+k+1-r1)*(r1-1) + r2*(n2-r2) + math.log(q,2)
        return round(WF1 + WF2, 3)
 
+def Classical_NH_OJ(q, m, n, k, r, n1, n2, n3, r1, r2, w):
+    WF1 = Classical_NH_OJ_Basis(q, m, n, k, r, n1, n2, n3, r1, r2, w)
+    WF2 = Classical_OJ_Coordinates(q, m, n, k, r, n1, n2, n3, r1, r2, w)
+    return round(min(WF1, WF2), 3)
 
 # NH-Multi-RQC-AG
-#(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,61,3*50,50,12,50,50,50,7,5,2.81) # 128  (e1,e2,e3) 
-#(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,79,3*95,95,13,95,95,95,8,5,2.81) # 192  (e1,e2,e3)
+(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,61,3*50,50,12,50,50,50,7,5,2.81) # 128  226 & 193 & 363
+#(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,79,3*95,95,13,95,95,95,8,5,2.81) # 192  310 & 277 & 743
 
 # NH-Multi-UR-AG
-# (q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,73,2*22+13,22,12,22,13,22,8,4,2.81) # 128  (e1,e2,e3) 
-(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,97,2*30+14,30,13,30,14,30,9,4,2.81) # 192  (e1,e2,e3)
+# (q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,73,2*22+13,22,12,22,13,22,8,4,2.81) # 128  302 & 264 & 217
+#(q,m,n,k,r,n1,n2,n3,r1,r2,w)= (2,97,2*30+14,30,13,30,14,30,9,4,2.81) # 192  431 & 389 & 309
 
 
 AGHT = Classical_AGHT(q, m, n, k, r, n1, n2, n3, r1, r2, w)
-AGHT_NHRD = Classical_AGHT_NHRD(q, m, n, k, r, n1, n2, n3, r1, r2, w)
-OJ_NHRD = Classical_OJ_Coordinates(q, m, n, k, r, n1, n2, n3, r1, r2, w)
+NH_AGHT = Classical_NH_AGHT(q, m, n, k, r, n1, n2, n3, r1, r2, w)
+NH_OJ = Classical_NH_OJ(q, m, n, k, r, n1, n2, n3, r1, r2, w)
 
 headers = ["Attacks", "Classical Bit Complexity"]
-data = [["AGHT attack ", AGHT], ["AGHT_NHRD attack ", AGHT_NHRD], ["OJ_NHRD attack  ", OJ_NHRD]]
+data = [["AGHT attack ", AGHT], ["NH-AGHT attack ", NH_AGHT], ["NH-OJ attack  ", NH_OJ]]
 table =  tabulate(data, headers=headers, tablefmt="grid", numalign="center", stralign="center", showindex=True)
 print(table)
+
+print(floor(AGHT), "&", floor(NH_AGHT), "&", floor(NH_OJ))
